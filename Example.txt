@@ -1,0 +1,190 @@
+##########################################################################
+###The following example uses the data set BacData.txt of 5 taxa and 1238 sites
+###to carry out most of the analyses available in the package. It is a small
+###data set so all analyses are quickly performed. Larger data sets can take 
+###a great deal of computer time.
+###If reversible require the files: BacData.txt, BirdTreeTop.txt,Param5Taxa.txt
+###If not reversible replace Param5Taxa.txt by Param5TaxaUnrev.txt
+########################################################################
+##For small data sets we can run the following top down search for
+##rate matrix allocation to edges with output giving estimates for
+##S,Pi,EdgeLength,beta,Root Vector, Prob for invariant sites, and
+##optimal group vector of rate matrices on edges(eg 1 2 1 2 1 1 1 2) for BacData.
+##########################################################################
+##This can be done better using HAL which produces the same output types 
+##using a better estimation algorithm and with much more rapid analysis. 
+##The rate matrix arrangements are produced in the form
+##(Aquifex_1,(Thermotoga_2,((Thermus_1,Deinococcu_2)_1,Bacillus_1)_1)_2)
+##Newick Rate form to group vector using function newickFormsToMergeRateMats
+############################################################################
+
+source("C:/GenMax/GenMax.R")
+
+Dir = "C:/GenMax/BacData"
+
+modelSearch(ioDir	     = Dir
+	  , seqFile	     = "BacData.txt"
+	  , numSites	     = 1238
+	  , pFile	     = "Param5Taxa.txt"
+	  , treeTop	     = "BacTreeTop.txt"
+	  , initF	     = c(0.25, 0.25, 0.25, 0.25)
+	  , isRev	     = TRUE
+	  , numItr	     = 20
+	  , numTaxa	     = 5
+	  , threshHeightDiff = 0.025
+	  , threshLogDiff    = 1
+	  , distMethod	     = "Euclidean"
+	  , distCalc	     = 1
+	  , numReplicates    = 1)
+
+
+getSummary(masterDir	  = "C:/GenMax/BacData"
+	  , numReplicates = 1
+	  , numSites	  = 1238
+	  , numSpecies	  = 5
+	  , isRev	  =TRUE)
+
+##################################################################
+##Results indicate best arrangement of rate matrices: 12121112
+##Run analysis as a single computation with this arrangement
+###################################################################
+
+Seqs = "BacData.txt"
+Pars = "Param5Taxa.txt"
+Init=c(0.25, 0.25, 0.25, 0.25)
+Case.ACGT<-initializeGlobalParam(inOutDir=Dir
+				, sequenceFileName  = Seqs
+				, paramFileName     = Pars
+				, newickTreeTopFile = "BacTreeTop.txt"
+				, initRootVect	    = Init
+				, isReversible	    = TRUE)
+
+
+SmatrixGroups = c(1,2,1,2,1,1,1,2)
+PiVectrGroups = c(3,1,2,1,2,1,1,1,2) # 1st number 1 corresponds to the root node
+
+estimateMleParam(inOutDir=Dir
+		, outFile="ResBacData.txt"
+		, grpSmat=SmatrixGroups
+		, grpPiVector=PiVectrGroups
+		, numIterations=20
+		, invProbSame=FALSE
+		, computeInv=TRUE
+		, beta=0
+		, pxInv=init
+		, verbose=FALSE
+		, isReversible=TRUE)
+
+
+########################################################################
+##Results indicate best arrangement of rate matrices: 12121112
+##So test for lumpability with this arrangement
+##There is a very slight difference between OrigResultsN.txt and ResBacData.txt above
+##due to use of constrOptim in LumpabilityTest and optim in estimateMleParam 
+##Output is in OrigResults.N, LumpResultsSW.txt, etc and Test_for_Lumpability.txt
+###########################################################################
+rm(list=ls())
+source("C:/GenMax/LumpTest.R")
+
+LumpabilityTest(fileDir = "C:/GenMax/BacData"
+		, seqFile        = "BacData.txt"
+		, parMatrixFile  = "Param5Taxa.txt"
+		, NewickTreeFile = "BacTreeTop.txt"
+		, initialPi      = c(0.25, 0.25, 0.25, 0.25)
+		, grpSmat        = c(1,2,1,2,1,1,1,2)
+		, grpPiVector    = c(3,1,2,1,2,1,1,1,2)
+		, beta           = 0.5
+		, InvProbSame    = FALSE
+		, pxInv          = c(0.25, 0.25, 0.25, 0.25)
+		, verbose        = TRUE
+		, isReversible   = TRUE
+		, Grouping       = c("SW", "KM","RY")
+		, numItr         = 20)
+
+############################################################################
+##Now recode and obtain estimates under recoding
+######################################################################
+rm(list=ls())
+source("C:/GenMax/GenMax.R")
+Dir = "C:/GenMax/BacData"
+
+Seqs = "BacData.txt"
+Pars = "Param5Taxa.txt"
+
+Recoding(inOutDir 	   = Dir
+	, sequenceFileName = Seqs
+	, paramFileName	   = Pars
+	, isReversible     = TRUE
+	, Group            = "SW")
+
+
+
+
+
+Seqs = "BacDataRecoded.txt"
+Pars = "Param5TaxaReduced.txt"
+Init=c(.5,.5)
+initializeGlobalParam(inOutDir=Dir
+			, sequenceFileName  = Seqs
+			, paramFileName     = Pars
+			, newickTreeTopFile = "BacTreeTop.txt"
+			, initRootVect	    = Init
+			, isReversible	    = TRUE)
+
+
+
+estimateMleParam(inOutDir = Dir
+	, outFile = "ResBacDataRecodedSW.txt"
+	, grpSmat = c(1,2,1,2,1,1,1,2)
+	, grpPiVector = c(3,1,2,1,2,1,1,1,2)							
+	, numIterations = 20
+	, invProbSame = FALSE
+	, computeInv = TRUE		
+	, beta = 0
+	, pxInv = Init
+	, verbose = TRUE
+	, isReversible=TRUE)
+
+###################################################################################
+##Bootstrap analysis for BacData.txt 
+###################################################################################
+source("C:/GenMax/GenMax.R")
+generateBootstraps(numReplicates = 10
+		, numSites  = 1238
+		, paramFileName	= "C:/GenMax/BacData/ResBacData.txt"			
+		, outFileName = "C:/GenMax/BacData/BSBacData.txt"
+		, isReversible =TRUE
+		, StateSpaceVector=NULL) 
+					
+analyzeData(inOutDir = "C:/GenMax/BacData"
+	, paramFileName = "ResBacData.txt"
+	, newickTreeTopFile = "BacTreeTop.txt"							# I removed the command seqLength. It appeared between inOutDir and paramFileName
+	, numIterations = 20
+	, invProbSame = FALSE
+	, computeInv = TRUE			
+	, verbose = FALSE
+	, numRep = 10
+	, replicateFile	= "BSBacData.txt"		
+	, isReversible = TRUE)
+
+
+
+computeStatistics(fileDir = "C:/GenMax/BacData"
+	, numTaxa = 5
+	, meanStdFile = "meanStdFile.txt"
+	, deltaLogFile = "deltaLogFile.txt"
+	, isReversible = TRUE) 							
+
+
+########################################################################################
+##Using function to convert from HAL rate matrix type to group vector and a reverse function
+#########################################################################################
+treeFile="C:/GenMax/BacData/BacTreeTop.txt"
+rateTreeFile="C:/GenMax/BacData/BacTreeTopRateMats.txt"
+outRateMat=newickFormsToMergeRateMats(treeFile,rateTreeFile)
+outNewRateForm=mergeMatrixToNewickRateFormat(outRateMat$mergeMat,outRateMat$rateTree,outRateMat$leaves)
+
+
+
+
+

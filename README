@@ -1,0 +1,76 @@
+NOTES REGARDING SOFTWARE
+
+NAME        GenMax
+
+VERSION     1.0
+
+COPYRIGHT   Copyright © 2021 John Robinson & Lars Jermiin. All rights reserved.
+
+WARNING     The copyright holder takes no legal responsibility for the correctness of 
+            results obtained using this program.
+
+AUTHORS     John Robinson & Lars Sommer Jermiin
+
+ADDRESS     University of Sydney
+            Australian National University
+            University College Dublin            
+
+CONTACT     john.robinson@sydney.edu.au
+            lars.jermiin@anu.edu.au
+            lars.jermiin@ucd.ie
+
+DATE        ? Month Year
+
+PURPOSE     Written in R, the GenMax program package is designed to test whether the 
+            Markovian property of an evolutionary process is retained recoded DNA.
+             
+FORMATS     Sequences must be stored in the sequential PHYLIP format. 
+            Trees must be stored in the Newick format.
+ 
+DATA TYPE   Sequences can be read as strings of nucleotides.
+
+HELP        Contact the authors
+
+STATUS      Software complete
+
+NOTE        Contact author for updates, etc
+
+CITATION    Vera-Ruiz V.A., Robinson J., Jermiin L.S. 2021.
+            A likelihood-ratio test for lumpability of phylogenetic data: Is the Markovian
+            property of an evolutionary process retained in recoded DNA? (in review). 
+
+DESCRIPTION The package gives functions written in R for maximum-likelihood analysis of 
+            phylogenetic data. It requires the data in the sequential Phylip form (first 
+            row number of taxa and number of sites separated by a space and other rows 
+            with taxa name in ten positions followed by nucleotides), a newick file for 
+            the tree and an initial parameter file giving values for 6 off diagonal 
+            elements of S, 4 values of pi and edge length for each of the tree edges. 
+            Illustration of commands using these is found in Example.txt
+
+
+There are two files of functions: GenMax.R and LumpTest.R.
+
+Main functions in GenMax.R (these generalize functions in MaxR to other than alphabets of 4)
+
+modelSearch                   Top down heuristic search for optimal arrangement of rate 
+                              matrices
+getSummary                    Summarize results of search
+initializeGlobaParam          Set up parameters for ML estimation
+estimateMleParam              ML estimation of model parameters
+
+Recoding                      Recode from 4 value state space
+
+generateBootstraps            Obtain parametric bootstrap MC generated simulated data sets
+analyzeData                   Analyze multiple data sets
+computeStatistics             Obtain mean and sd from analysis of multiple data sets
+
+newickFormatToMergeMatrix     Converts Newick tree to tree transversal matrix
+mergeMatrixtoNewickFormat     Converts tree transversal matrix to Newick tree
+newickFormsToMergeRateMats    Converts Newick tree with rate arrangement to tree
+                              transversal matrix and corresponding rate arrangement matrix
+mergeMatrixToNewickRateFormat Convert tree transversal matrix and corresponding rate 
+                              arrangement matrix to Newick tree with rate arrangement
+
+Function in LumpTest.R
+
+LumpabilityTest               Perform lumpability test on nucleotide data
