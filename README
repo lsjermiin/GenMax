@@ -4,7 +4,7 @@ NAME        GenMax
 
 VERSION     1.0
 
-COPYRIGHT   Copyright © 2021 John Robinson & Lars Jermiin. All rights reserved.
+COPYRIGHT   Copyright © 2021-2022 John Robinson & Lars Jermiin. All rights reserved.
 
 WARNING     The copyright holder takes no legal responsibility for the correctness of 
             results obtained using this program.
@@ -19,7 +19,7 @@ CONTACT     john.robinson@sydney.edu.au
             lars.jermiin@anu.edu.au
             lars.jermiin@ucd.ie
 
-DATE        ? Month Year
+DATE        5 March 2021
 
 PURPOSE     Written in R, the GenMax program package is designed to test whether the 
             Markovian property of an evolutionary process is retained recoded DNA.
@@ -35,9 +35,10 @@ STATUS      Software complete
 
 NOTE        Contact author for updates, etc
 
-CITATION    Vera-Ruiz V.A., Robinson J., Jermiin L.S. 2021.
+CITATION    Vera-Ruiz V.A., Robinson J., Jermiin L.S. 2022.
             A likelihood-ratio test for lumpability of phylogenetic data: Is the Markovian
-            property of an evolutionary process retained in recoded DNA? (in review). 
+            property of an evolutionary process retained in recoded DNA? Systematic 
+            Biology 71, 660-675. 
 
 DESCRIPTION The package gives functions written in R for maximum-likelihood analysis of 
             phylogenetic data. It requires the data in the sequential Phylip form (first 
